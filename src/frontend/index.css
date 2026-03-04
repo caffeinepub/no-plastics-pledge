@@ -1,0 +1,183 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fraunces - elegant serif display font */
+@font-face {
+  font-family: "Fraunces";
+  src: url("/assets/fonts/Fraunces.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Plus Jakarta Sans - refined body font */
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/assets/fonts/PlusJakartaSans.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Crimson Pro - elegant body serif */
+@font-face {
+  font-family: "Crimson Pro";
+  src: url("/assets/fonts/CrimsonPro.woff2") format("woff2");
+  font-weight: 200 900;
+  font-style: italic normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+
+    /* Nature-inspired eco palette — OKLCH L C H */
+    /* Primary: Deep Forest Green */
+    --background: 0.97 0.008 125;
+    --foreground: 0.18 0.04 145;
+
+    --card: 1 0 0;
+    --card-foreground: 0.18 0.04 145;
+
+    --popover: 1 0 0;
+    --popover-foreground: 0.18 0.04 145;
+
+    /* Deep forest green CTA */
+    --primary: 0.32 0.09 152;
+    --primary-foreground: 0.98 0.005 120;
+
+    /* Sage green secondary */
+    --secondary: 0.88 0.035 138;
+    --secondary-foreground: 0.22 0.06 148;
+
+    /* Light moss muted */
+    --muted: 0.93 0.02 130;
+    --muted-foreground: 0.48 0.05 145;
+
+    /* Warm earth accent */
+    --accent: 0.85 0.06 85;
+    --accent-foreground: 0.22 0.06 95;
+
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 0.98 0 0;
+
+    --border: 0.84 0.03 138;
+    --input: 0.88 0.025 135;
+    --ring: 0.32 0.09 152;
+
+    /* Chart colors - nature palette */
+    --chart-1: 0.55 0.15 152;
+    --chart-2: 0.65 0.12 85;
+    --chart-3: 0.45 0.1 220;
+    --chart-4: 0.72 0.18 70;
+    --chart-5: 0.58 0.14 180;
+
+    --sidebar: 0.95 0.012 130;
+    --sidebar-foreground: 0.18 0.04 145;
+    --sidebar-primary: 0.32 0.09 152;
+    --sidebar-primary-foreground: 0.98 0.005 120;
+    --sidebar-accent: 0.88 0.035 138;
+    --sidebar-accent-foreground: 0.22 0.06 148;
+    --sidebar-border: 0.84 0.03 138;
+    --sidebar-ring: 0.32 0.09 152;
+
+    /* Custom eco tokens */
+    --forest: 0.32 0.09 152;
+    --forest-light: 0.48 0.1 150;
+    --leaf: 0.58 0.18 142;
+    --sage: 0.72 0.08 138;
+    --earth: 0.55 0.08 65;
+    --ocean: 0.5 0.14 218;
+    --cream: 0.97 0.015 90;
+    --gold: 0.75 0.13 78;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: "Fraunces", serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: "Fraunces", serif;
+  }
+
+  .font-body {
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+
+  .font-serif {
+    font-family: "Crimson Pro", Georgia, serif;
+  }
+
+  /* Certificate-specific decorative border */
+  .certificate-border {
+    background-image:
+      repeating-linear-gradient(0deg, oklch(0.45 0.12 138), oklch(0.45 0.12 138) 2px, transparent 2px, transparent 8px),
+      repeating-linear-gradient(90deg, oklch(0.45 0.12 138), oklch(0.45 0.12 138) 2px, transparent 2px, transparent 8px),
+      repeating-linear-gradient(180deg, oklch(0.45 0.12 138), oklch(0.45 0.12 138) 2px, transparent 2px, transparent 8px),
+      repeating-linear-gradient(270deg, oklch(0.45 0.12 138), oklch(0.45 0.12 138) 2px, transparent 2px, transparent 8px);
+    background-size: 100% 16px, 16px 100%, 100% 16px, 16px 100%;
+    background-position: top, right, bottom, left;
+    background-repeat: no-repeat;
+  }
+
+  /* Noise texture overlay for depth */
+  .noise-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: 0.4;
+  }
+
+  /* Pledge count animation */
+  @keyframes count-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .count-animate {
+    animation: count-up 0.4s ease-out forwards;
+  }
+
+  /* Leaf pattern decorative */
+  .leaf-pattern {
+    background-image: radial-gradient(circle at 20% 50%, oklch(0.55 0.15 142 / 0.06) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 20%, oklch(0.5 0.14 218 / 0.05) 0%, transparent 40%),
+                      radial-gradient(circle at 60% 80%, oklch(0.65 0.12 85 / 0.06) 0%, transparent 40%);
+  }
+}
+
+/* Print styles for certificate */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #certificate-print-area,
+  #certificate-print-area * {
+    visibility: visible;
+  }
+  #certificate-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 794px;
+  }
+}
