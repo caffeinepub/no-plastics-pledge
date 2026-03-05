@@ -13,6 +13,96 @@ interface CertificateProps {
 const PLEDGE_TEXT =
   "I pledge to eliminate single-use plastics from my daily life — refusing plastic bags, bottles, straws, cutlery, and packaging — and to inspire others to do the same.";
 
+/* ─── Decorative SVG elements used inside the certificate ─────────────────── */
+
+/** Botanical leaf motif — used as left/right flanking decoration */
+function LeafMotif({ flip = false }: { flip?: boolean }) {
+  return (
+    <svg
+      width="48"
+      height="24"
+      viewBox="0 0 48 24"
+      fill="none"
+      role="img"
+      aria-label="Botanical leaf decoration"
+      style={{ transform: flip ? "scaleX(-1)" : undefined, display: "block" }}
+    >
+      <path
+        d="M2 12 C8 4, 20 2, 28 8 C20 6, 14 10, 12 14 C20 10, 30 8, 40 12"
+        stroke="oklch(0.50 0.14 140)"
+        strokeWidth="1.2"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M2 12 C10 20, 22 22, 30 16 C22 18, 16 14, 14 10"
+        stroke="oklch(0.55 0.12 142)"
+        strokeWidth="0.8"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path
+        d="M40 12 L46 12"
+        stroke="oklch(0.50 0.14 140)"
+        strokeWidth="1"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/** Elegant ornamental divider with diamond and lines */
+function OrnamentalDivider({ wide = false }: { wide?: boolean }) {
+  const lineW = wide ? 120 : 80;
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "0",
+        margin: "0 auto",
+        width: "100%",
+      }}
+    >
+      <div
+        style={{
+          height: "1px",
+          width: `${lineW}px`,
+          background:
+            "linear-gradient(to right, transparent, oklch(0.52 0.16 140))",
+        }}
+      />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          padding: "0 12px",
+        }}
+      >
+        <span style={{ fontSize: "8px", color: "oklch(0.52 0.16 140)" }}>
+          ◆
+        </span>
+        <span style={{ fontSize: "14px", color: "oklch(0.44 0.18 140)" }}>
+          ✦
+        </span>
+        <span style={{ fontSize: "8px", color: "oklch(0.52 0.16 140)" }}>
+          ◆
+        </span>
+      </div>
+      <div
+        style={{
+          height: "1px",
+          width: `${lineW}px`,
+          background:
+            "linear-gradient(to left, transparent, oklch(0.52 0.16 140))",
+        }}
+      />
+    </div>
+  );
+}
+
 export function Certificate({ certificate, onReset }: CertificateProps) {
   const certRef = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -34,7 +124,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
       const canvas = await html2canvas(certRef.current, {
         scale: 2,
         useCORS: true,
-        backgroundColor: "#fff8f0",
+        backgroundColor: "#f5f0e4",
         logging: false,
         width: 794,
         height: certRef.current.offsetHeight,
@@ -86,7 +176,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
             className="font-display text-4xl font-bold mb-3"
             style={{ color: "oklch(0.22 0.07 148)" }}
           >
-            You've Joined the Movement!
+            You&apos;ve Joined the Movement!
           </h2>
           <p className="text-lg" style={{ color: "oklch(0.48 0.05 145)" }}>
             Your certificate of pledge is ready. Download it to share your
@@ -96,12 +186,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
 
         {/* Certificate preview wrapper — scaled to fit viewport */}
         <div className="flex justify-center mb-8">
-          <div
-            className="w-full overflow-hidden"
-            style={{
-              maxWidth: "100%",
-            }}
-          >
+          <div className="w-full overflow-hidden" style={{ maxWidth: "100%" }}>
             <div
               style={{
                 width: "794px",
@@ -117,301 +202,508 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                 style={{
                   width: "794px",
                   background:
-                    "linear-gradient(135deg, #fff8f0 0%, #f5f0e8 40%, #eef5ee 100%)",
-                  padding: "48px 56px",
+                    "linear-gradient(160deg, #faf6eb 0%, #f2ede0 30%, #e8f2e8 65%, #dff0df 100%)",
+                  padding: "52px 60px 44px",
                   fontFamily: "'Crimson Pro', Georgia, serif",
                   position: "relative",
                   boxSizing: "border-box",
+                  overflow: "hidden",
                 }}
               >
-                {/* Outer decorative border — double lines */}
+                {/* ── Watermark background text ─────────────────────────── */}
                 <div
                   style={{
                     position: "absolute",
-                    inset: "12px",
-                    border: "2px solid oklch(0.45 0.12 138)",
-                    borderRadius: "4px",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                     pointerEvents: "none",
+                    zIndex: 0,
                   }}
-                />
+                >
+                  <div
+                    style={{
+                      fontFamily: "Fraunces, Georgia, serif",
+                      fontSize: "120px",
+                      fontWeight: "900",
+                      color: "oklch(0.62 0.12 142)",
+                      opacity: 0.04,
+                      letterSpacing: "-0.02em",
+                      textTransform: "uppercase",
+                      userSelect: "none",
+                      lineHeight: "1",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    PLEDGE
+                  </div>
+                </div>
+
+                {/* ── Subtle radial glow in center ──────────────────────── */}
                 <div
                   style={{
                     position: "absolute",
-                    inset: "18px",
-                    border: "1px solid oklch(0.65 0.1 138 / 0.5)",
-                    borderRadius: "2px",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: "500px",
+                    height: "500px",
+                    borderRadius: "50%",
+                    background:
+                      "radial-gradient(circle, oklch(0.88 0.06 140 / 0.3) 0%, transparent 70%)",
                     pointerEvents: "none",
+                    zIndex: 0,
                   }}
                 />
 
-                {/* Corner ornaments */}
+                {/* ── Outer border — gold-green double frame ────────────── */}
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: "10px",
+                    border: "2.5px solid oklch(0.42 0.16 138)",
+                    borderRadius: "6px",
+                    pointerEvents: "none",
+                    zIndex: 1,
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: "16px",
+                    border: "1px solid oklch(0.62 0.12 138 / 0.45)",
+                    borderRadius: "3px",
+                    pointerEvents: "none",
+                    zIndex: 1,
+                  }}
+                />
+
+                {/* ── Corner flourishes ─────────────────────────────────── */}
                 {(
                   [
                     {
-                      pos: { top: "20px", left: "20px" },
-                      border: "2px 0 0 2px",
+                      pos: { top: "18px", left: "18px" },
+                      rt: "0deg",
                       id: "tl",
                     },
                     {
-                      pos: { top: "20px", right: "20px" },
-                      border: "2px 2px 0 0",
+                      pos: { top: "18px", right: "18px" },
+                      rt: "90deg",
                       id: "tr",
                     },
                     {
-                      pos: { bottom: "20px", left: "20px" },
-                      border: "0 0 2px 2px",
-                      id: "bl",
-                    },
-                    {
-                      pos: { bottom: "20px", right: "20px" },
-                      border: "0 2px 2px 0",
+                      pos: { bottom: "18px", right: "18px" },
+                      rt: "180deg",
                       id: "br",
                     },
+                    {
+                      pos: { bottom: "18px", left: "18px" },
+                      rt: "270deg",
+                      id: "bl",
+                    },
                   ] as const
-                ).map(({ pos, border, id }) => (
+                ).map(({ pos, rt, id }) => (
                   <div
                     key={id}
                     style={{
                       position: "absolute",
-                      width: "24px",
-                      height: "24px",
-                      borderColor: "oklch(0.58 0.18 142)",
-                      borderStyle: "solid",
-                      borderWidth: border,
+                      width: "32px",
+                      height: "32px",
                       ...pos,
+                      zIndex: 2,
+                      transform: `rotate(${rt})`,
+                      pointerEvents: "none",
                     }}
-                  />
+                  >
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 32 32"
+                      fill="none"
+                      role="img"
+                      aria-label="Corner flourish decoration"
+                    >
+                      <path
+                        d="M2 30 L2 6 Q2 2 6 2 L30 2"
+                        stroke="oklch(0.46 0.18 140)"
+                        strokeWidth="1.8"
+                        fill="none"
+                        strokeLinecap="round"
+                      />
+                      <circle
+                        cx="2"
+                        cy="2"
+                        r="2.5"
+                        fill="oklch(0.46 0.18 140)"
+                      />
+                    </svg>
+                  </div>
                 ))}
 
-                {/* Leaf decorative top center */}
-                <div
-                  style={{
-                    textAlign: "center",
-                    marginBottom: "8px",
-                    fontSize: "22px",
-                  }}
-                >
-                  🌿
-                </div>
-
-                {/* Campaign name */}
-                <div
-                  style={{
-                    textAlign: "center",
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontSize: "11px",
-                    letterSpacing: "0.2em",
-                    textTransform: "uppercase",
-                    color: "oklch(0.48 0.1 150)",
-                    marginBottom: "6px",
-                  }}
-                >
-                  No Single-Use Plastics Campaign
-                </div>
-
-                {/* Title */}
-                <div
-                  style={{
-                    textAlign: "center",
-                    fontFamily: "Fraunces, Georgia, serif",
-                    fontSize: "42px",
-                    fontWeight: "700",
-                    color: "oklch(0.22 0.07 148)",
-                    lineHeight: "1.1",
-                    marginBottom: "4px",
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  Certificate of Pledge
-                </div>
-
-                {/* Ornamental divider */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "12px",
-                    margin: "16px 0",
-                  }}
-                >
+                {/* ── All certificate content sits above the decorative layers ── */}
+                <div style={{ position: "relative", zIndex: 3 }}>
+                  {/* ── L' DORADO Header ────────────────────────────────── */}
                   <div
                     style={{
-                      height: "1px",
-                      width: "80px",
-                      background: "oklch(0.58 0.18 142)",
+                      textAlign: "center",
+                      marginBottom: "6px",
                     }}
-                  />
-                  <div style={{ fontSize: "16px" }}>✦</div>
-                  <div
-                    style={{
-                      height: "1px",
-                      width: "80px",
-                      background: "oklch(0.58 0.18 142)",
-                    }}
-                  />
-                </div>
-
-                {/* This certifies that */}
-                <div
-                  style={{
-                    textAlign: "center",
-                    fontFamily: "Crimson Pro, Georgia, serif",
-                    fontStyle: "italic",
-                    fontSize: "18px",
-                    color: "oklch(0.42 0.06 145)",
-                    marginBottom: "10px",
-                  }}
-                >
-                  This certifies that
-                </div>
-
-                {/* Pledger's Name */}
-                <div
-                  style={{
-                    textAlign: "center",
-                    fontFamily: "Fraunces, Georgia, serif",
-                    fontSize: "38px",
-                    fontWeight: "600",
-                    color: "oklch(0.28 0.1 150)",
-                    letterSpacing: "-0.01em",
-                    marginBottom: "6px",
-                    lineHeight: "1.2",
-                    borderBottom: "1px solid oklch(0.75 0.1 138)",
-                    paddingBottom: "10px",
-                    maxWidth: "540px",
-                    margin: "0 auto 16px",
-                  }}
-                >
-                  {certificate.name}
-                </div>
-
-                {/* Pledge text */}
-                <div
-                  style={{
-                    textAlign: "center",
-                    fontFamily: "Crimson Pro, Georgia, serif",
-                    fontStyle: "italic",
-                    fontSize: "16px",
-                    lineHeight: "1.7",
-                    color: "oklch(0.35 0.05 145)",
-                    maxWidth: "560px",
-                    margin: "0 auto 24px",
-                  }}
-                >
-                  "{PLEDGE_TEXT}"
-                </div>
-
-                {/* Date and Certificate ID row */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-end",
-                    marginBottom: "24px",
-                    paddingTop: "8px",
-                    borderTop: "1px solid oklch(0.84 0.05 135)",
-                  }}
-                >
-                  <div>
+                  >
+                    {/* Decorative top botanical row */}
                     <div
                       style={{
-                        fontFamily: "'Plus Jakarta Sans', sans-serif",
-                        fontSize: "10px",
-                        letterSpacing: "0.15em",
-                        textTransform: "uppercase",
-                        color: "oklch(0.58 0.06 145)",
-                        marginBottom: "3px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "16px",
+                        marginBottom: "14px",
                       }}
                     >
-                      Date of Pledge
+                      <LeafMotif />
+                      <span
+                        style={{
+                          fontSize: "10px",
+                          letterSpacing: "0.35em",
+                          textTransform: "uppercase",
+                          fontFamily: "'Plus Jakarta Sans', sans-serif",
+                          color: "oklch(0.50 0.12 145)",
+                          fontWeight: "600",
+                        }}
+                      >
+                        EST. 2024
+                      </span>
+                      <LeafMotif flip />
                     </div>
+
+                    {/* Main org name */}
                     <div
                       style={{
-                        fontFamily: "Crimson Pro, Georgia, serif",
-                        fontSize: "17px",
+                        fontFamily: "Fraunces, Georgia, serif",
+                        fontSize: "52px",
+                        fontWeight: "900",
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        lineHeight: "1",
+                        background:
+                          "linear-gradient(135deg, oklch(0.28 0.14 148) 0%, oklch(0.40 0.20 140) 50%, oklch(0.30 0.14 152) 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      L&apos; DORADO
+                    </div>
+
+                    <OrnamentalDivider wide />
+                  </div>
+
+                  {/* ── Campaign sub-label ───────────────────────────────── */}
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      fontSize: "10px",
+                      letterSpacing: "0.26em",
+                      textTransform: "uppercase",
+                      color: "oklch(0.46 0.10 150)",
+                      marginTop: "12px",
+                      marginBottom: "4px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    No Single-Use Plastics Campaign
+                  </div>
+
+                  {/* ── Certificate title ────────────────────────────────── */}
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontFamily: "Fraunces, Georgia, serif",
+                      fontSize: "40px",
+                      fontWeight: "700",
+                      color: "oklch(0.20 0.08 148)",
+                      lineHeight: "1.1",
+                      marginBottom: "2px",
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    Certificate of Pledge
+                  </div>
+
+                  {/* ── Ornamental divider ───────────────────────────────── */}
+                  <div style={{ margin: "14px 0" }}>
+                    <OrnamentalDivider />
+                  </div>
+
+                  {/* ── This certifies that ─────────────────────────────── */}
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontFamily: "Crimson Pro, Georgia, serif",
+                      fontStyle: "italic",
+                      fontSize: "18px",
+                      color: "oklch(0.42 0.06 145)",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    This certifies that
+                  </div>
+
+                  {/* ── Pledger's name ───────────────────────────────────── */}
+                  <div
+                    style={{
+                      textAlign: "center",
+                      marginBottom: "18px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "inline-block",
+                        fontFamily: "Fraunces, Georgia, serif",
+                        fontSize: "40px",
                         fontWeight: "600",
-                        color: "oklch(0.28 0.08 148)",
+                        color: "oklch(0.24 0.12 150)",
+                        letterSpacing: "-0.01em",
+                        lineHeight: "1.2",
+                        paddingBottom: "8px",
+                        paddingLeft: "24px",
+                        paddingRight: "24px",
+                        borderBottom: "2px solid oklch(0.52 0.16 138)",
+                        position: "relative",
                       }}
                     >
-                      {dateFormatted}
+                      {certificate.name}
+                      {/* Subtle underline glow */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          bottom: "-4px",
+                          left: "50%",
+                          transform: "translateX(-50%)",
+                          height: "1px",
+                          width: "60%",
+                          background: "oklch(0.65 0.12 138 / 0.5)",
+                        }}
+                      />
                     </div>
                   </div>
-                  <div style={{ textAlign: "right" }}>
+
+                  {/* ── Pledge text ──────────────────────────────────────── */}
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontFamily: "Crimson Pro, Georgia, serif",
+                      fontStyle: "italic",
+                      fontSize: "15.5px",
+                      lineHeight: "1.75",
+                      color: "oklch(0.34 0.06 145)",
+                      maxWidth: "580px",
+                      margin: "0 auto 22px",
+                      padding: "14px 20px",
+                      background: "oklch(0.94 0.04 140 / 0.5)",
+                      borderLeft: "3px solid oklch(0.52 0.16 140)",
+                      borderRight: "3px solid oklch(0.52 0.16 140)",
+                      borderRadius: "2px",
+                    }}
+                  >
+                    &ldquo;{PLEDGE_TEXT}&rdquo;
+                  </div>
+
+                  {/* ── Thin section separator ───────────────────────────── */}
+                  <div
+                    style={{
+                      borderTop: "1px solid oklch(0.80 0.06 138)",
+                      marginBottom: "16px",
+                      paddingTop: "14px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    {/* Date */}
+                    <div>
+                      <div
+                        style={{
+                          fontFamily: "'Plus Jakarta Sans', sans-serif",
+                          fontSize: "9px",
+                          letterSpacing: "0.18em",
+                          textTransform: "uppercase",
+                          color: "oklch(0.55 0.07 145)",
+                          marginBottom: "3px",
+                          fontWeight: "600",
+                        }}
+                      >
+                        Date of Pledge
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "Crimson Pro, Georgia, serif",
+                          fontSize: "17px",
+                          fontWeight: "600",
+                          color: "oklch(0.26 0.09 148)",
+                        }}
+                      >
+                        {dateFormatted}
+                      </div>
+                    </div>
+
+                    {/* Seal-style eco badge */}
                     <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "2px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "52px",
+                          height: "52px",
+                          borderRadius: "50%",
+                          border: "2px solid oklch(0.44 0.16 140)",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          background: "oklch(0.92 0.06 140 / 0.6)",
+                          gap: "1px",
+                        }}
+                      >
+                        <div style={{ fontSize: "18px", lineHeight: "1" }}>
+                          🌿
+                        </div>
+                        <div
+                          style={{
+                            fontFamily: "'Plus Jakarta Sans', sans-serif",
+                            fontSize: "6px",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                            color: "oklch(0.38 0.14 140)",
+                            fontWeight: "700",
+                          }}
+                        >
+                          PLEDGED
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Certificate No. */}
+                    <div style={{ textAlign: "right" }}>
+                      <div
+                        style={{
+                          fontFamily: "'Plus Jakarta Sans', sans-serif",
+                          fontSize: "9px",
+                          letterSpacing: "0.18em",
+                          textTransform: "uppercase",
+                          color: "oklch(0.55 0.07 145)",
+                          marginBottom: "3px",
+                          fontWeight: "600",
+                        }}
+                      >
+                        Certificate No.
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "Crimson Pro, Georgia, serif",
+                          fontSize: "14px",
+                          color: "oklch(0.44 0.07 145)",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        #{certificate.id}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ── Signature block ──────────────────────────────────── */}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    <div style={{ textAlign: "center" }}>
+                      <img
+                        src="/assets/generated/signature-stamp-transparent.dim_300x120.png"
+                        alt="Campaign Organizer Signature"
+                        style={{
+                          width: "180px",
+                          height: "72px",
+                          objectFit: "contain",
+                          display: "block",
+                          marginBottom: "4px",
+                        }}
+                        crossOrigin="anonymous"
+                      />
+                      <div
+                        style={{
+                          borderTop: "1px solid oklch(0.62 0.12 138)",
+                          paddingTop: "5px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontFamily: "'Plus Jakarta Sans', sans-serif",
+                            fontSize: "9px",
+                            letterSpacing: "0.14em",
+                            textTransform: "uppercase",
+                            color: "oklch(0.52 0.08 148)",
+                            marginBottom: "2px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          Campaign Organizer
+                        </div>
+                        <div
+                          style={{
+                            fontFamily: "Fraunces, Georgia, serif",
+                            fontSize: "14px",
+                            fontWeight: "800",
+                            letterSpacing: "0.08em",
+                            color: "oklch(0.34 0.18 142)",
+                          }}
+                        >
+                          L&apos; DORADO
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ── Bottom botanical row ─────────────────────────────── */}
+                  <div
+                    style={{
+                      textAlign: "center",
+                      marginTop: "14px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "8px",
+                      opacity: 0.55,
+                    }}
+                  >
+                    <LeafMotif />
+                    <span style={{ fontSize: "12px" }}>🌱</span>
+                    <span
                       style={{
                         fontFamily: "'Plus Jakarta Sans', sans-serif",
-                        fontSize: "10px",
-                        letterSpacing: "0.15em",
+                        fontSize: "8px",
+                        letterSpacing: "0.3em",
                         textTransform: "uppercase",
-                        color: "oklch(0.58 0.06 145)",
-                        marginBottom: "3px",
+                        color: "oklch(0.44 0.12 145)",
+                        fontWeight: "600",
                       }}
                     >
-                      Certificate No.
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "Crimson Pro, Georgia, serif",
-                        fontSize: "14px",
-                        color: "oklch(0.45 0.06 145)",
-                        fontStyle: "italic",
-                      }}
-                    >
-                      #{certificate.id}
-                    </div>
+                      FOR A CLEANER PLANET
+                    </span>
+                    <span style={{ fontSize: "12px" }}>🌊</span>
+                    <LeafMotif flip />
                   </div>
                 </div>
-
-                {/* Signature block */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "flex-end",
-                    gap: "12px",
-                  }}
-                >
-                  <div style={{ textAlign: "center" }}>
-                    <img
-                      src="/assets/generated/signature-stamp-transparent.dim_300x120.png"
-                      alt="Campaign Organizer Signature"
-                      style={{
-                        width: "180px",
-                        height: "72px",
-                        objectFit: "contain",
-                        display: "block",
-                        marginBottom: "4px",
-                      }}
-                      crossOrigin="anonymous"
-                    />
-                    <div
-                      style={{
-                        fontFamily: "'Plus Jakarta Sans', sans-serif",
-                        fontSize: "11px",
-                        letterSpacing: "0.12em",
-                        textTransform: "uppercase",
-                        color: "oklch(0.42 0.08 148)",
-                        borderTop: "1px solid oklch(0.65 0.1 138)",
-                        paddingTop: "4px",
-                      }}
-                    >
-                      Campaign Organizer
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bottom leaf decoration */}
-                <div
-                  style={{
-                    textAlign: "center",
-                    marginTop: "16px",
-                    fontSize: "16px",
-                    opacity: 0.5,
-                  }}
-                >
-                  🌱 · 🌊 · 🌍
-                </div>
+                {/* end z-index 3 wrapper */}
               </div>
             </div>
           </div>

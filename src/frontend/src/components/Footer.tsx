@@ -27,7 +27,7 @@ export function Footer() {
             style={{ color: "oklch(0.6 0.04 145)" }}
           >
             Together, we can protect our oceans and create a cleaner, healthier
-            planet for future generations.
+            planet for generations to come.
           </p>
 
           <div
@@ -39,7 +39,11 @@ export function Footer() {
             className="font-body text-xs"
             style={{ color: "oklch(0.5 0.04 145)" }}
           >
-            © {year}. Built with ❤️ using{" "}
+            An initiative by{" "}
+            <span style={{ color: "oklch(0.55 0.18 142)", fontWeight: 600 }}>
+              L&apos; DORADO
+            </span>
+            {" · "}© {year}. Built with ❤️ using{" "}
             <a
               href={caffeineUrl}
               target="_blank"

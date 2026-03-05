@@ -48,12 +48,20 @@ export default function App() {
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className="text-xl">🌿</span>
-            <span
-              className="font-display font-bold text-lg tracking-tight"
-              style={{ color: "oklch(0.92 0.06 138)" }}
-            >
-              No Plastics Pledge
-            </span>
+            <div className="flex flex-col leading-none">
+              <span
+                className="font-display font-bold text-lg tracking-tight"
+                style={{ color: "oklch(0.92 0.06 138)" }}
+              >
+                No Single-Use Plastics Pledge
+              </span>
+              <span
+                className="font-body text-xs font-semibold tracking-widest uppercase"
+                style={{ color: "oklch(0.55 0.18 142)" }}
+              >
+                L&apos; DORADO
+              </span>
+            </div>
           </div>
 
           <button
