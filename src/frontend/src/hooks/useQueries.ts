@@ -28,18 +28,24 @@ export function useGetRecentCertificates() {
 }
 
 export function useTakePledge() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
   const queryClient = useQueryClient();
 
-  return useMutation<Certificate, Error, { name: string; email: string }>({
-    mutationFn: async ({ name, email }) => {
-      if (!actor) throw new Error("Not connected");
-      return actor.takePledge(name, email);
-    },
-    onSuccess: () => {
-      // Refresh the pledge count and wall after successful submission
-      queryClient.invalidateQueries({ queryKey: ["totalPledges"] });
-      queryClient.invalidateQueries({ queryKey: ["recentCertificates"] });
-    },
-  });
+  return {
+    ...useMutation<Certificate, Error, { name: string; email: string }>({
+      mutationFn: async ({ name, email }) => {
+        if (!actor)
+          throw new Error(
+            "Not connected to the network. Please wait a moment and try again.",
+          );
+        return actor.takePledge(name, email);
+      },
+      onSuccess: () => {
+        // Refresh the pledge count and wall after successful submission
+        queryClient.invalidateQueries({ queryKey: ["totalPledges"] });
+        queryClient.invalidateQueries({ queryKey: ["recentCertificates"] });
+      },
+    }),
+    isActorReady: !!actor && !isFetching,
+  };
 }

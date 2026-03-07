@@ -22,7 +22,7 @@ export function PledgeForm({ onSuccess }: PledgeFormProps) {
     email?: string;
   }>({});
 
-  const mutation = useTakePledge();
+  const { isActorReady, ...mutation } = useTakePledge();
 
   const validate = () => {
     const errors: { name?: string; email?: string } = {};
@@ -294,17 +294,26 @@ export function PledgeForm({ onSuccess }: PledgeFormProps) {
               <Button
                 type="submit"
                 data-ocid="pledge.submit_button"
-                disabled={mutation.isPending}
+                disabled={mutation.isPending || !isActorReady}
                 className="w-full h-14 text-lg font-body font-bold rounded-xl shadow-eco transition-all duration-300 hover:shadow-eco-lg hover:scale-[1.01] active:scale-[0.99]"
                 style={{
-                  background: mutation.isPending
-                    ? "oklch(0.48 0.07 152)"
-                    : "oklch(0.32 0.09 152)",
+                  background:
+                    mutation.isPending || !isActorReady
+                      ? "oklch(0.48 0.07 152)"
+                      : "oklch(0.32 0.09 152)",
                   color: "oklch(0.97 0.005 120)",
                   border: "none",
                 }}
               >
-                {mutation.isPending ? (
+                {!isActorReady ? (
+                  <span
+                    data-ocid="pledge.loading_state"
+                    className="flex items-center gap-2"
+                  >
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Connecting…
+                  </span>
+                ) : mutation.isPending ? (
                   <span
                     data-ocid="pledge.loading_state"
                     className="flex items-center gap-2"

@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 import { CheckCircle, Download, Loader2, RotateCcw } from "lucide-react";
 import { motion } from "motion/react";
 import { useRef, useState } from "react";
@@ -116,11 +118,6 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
     setDownloadSuccess(false);
 
     try {
-      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
-        import("html2canvas"),
-        import("jspdf"),
-      ]);
-
       const canvas = await html2canvas(certRef.current, {
         scale: 2,
         useCORS: true,
@@ -131,13 +128,14 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
       });
 
       const imgData = canvas.toDataURL("image/jpeg", 0.98);
+      const certHeightPx = Math.round(canvas.height / 2);
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "px",
-        format: [794, Math.round(canvas.height / 2)],
+        format: [794, certHeightPx],
       });
 
-      pdf.addImage(imgData, "JPEG", 0, 0, 794, Math.round(canvas.height / 2));
+      pdf.addImage(imgData, "JPEG", 0, 0, 794, certHeightPx);
       pdf.save(`pledge-certificate-${certificate.id}.pdf`);
 
       setDownloadSuccess(true);
@@ -203,7 +201,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                   width: "794px",
                   background:
                     "linear-gradient(160deg, #faf6eb 0%, #f2ede0 30%, #e8f2e8 65%, #dff0df 100%)",
-                  padding: "52px 60px 44px",
+                  padding: "36px 60px 30px",
                   fontFamily: "'Crimson Pro', Georgia, serif",
                   position: "relative",
                   boxSizing: "border-box",
@@ -347,7 +345,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                   <div
                     style={{
                       textAlign: "center",
-                      marginBottom: "6px",
+                      marginBottom: "4px",
                     }}
                   >
                     {/* Decorative top botanical row */}
@@ -357,7 +355,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                         alignItems: "center",
                         justifyContent: "center",
                         gap: "16px",
-                        marginBottom: "14px",
+                        marginBottom: "10px",
                       }}
                     >
                       <LeafMotif />
@@ -371,7 +369,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                           fontWeight: "600",
                         }}
                       >
-                        EST. 2024
+                        EST. 2017
                       </span>
                       <LeafMotif flip />
                     </div>
@@ -408,8 +406,8 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                       letterSpacing: "0.26em",
                       textTransform: "uppercase",
                       color: "oklch(0.46 0.10 150)",
-                      marginTop: "12px",
-                      marginBottom: "4px",
+                      marginTop: "8px",
+                      marginBottom: "3px",
                       fontWeight: "600",
                     }}
                   >
@@ -421,7 +419,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                     style={{
                       textAlign: "center",
                       fontFamily: "Fraunces, Georgia, serif",
-                      fontSize: "40px",
+                      fontSize: "36px",
                       fontWeight: "700",
                       color: "oklch(0.20 0.08 148)",
                       lineHeight: "1.1",
@@ -433,7 +431,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                   </div>
 
                   {/* ── Ornamental divider ───────────────────────────────── */}
-                  <div style={{ margin: "14px 0" }}>
+                  <div style={{ margin: "10px 0" }}>
                     <OrnamentalDivider />
                   </div>
 
@@ -445,7 +443,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                       fontStyle: "italic",
                       fontSize: "18px",
                       color: "oklch(0.42 0.06 145)",
-                      marginBottom: "8px",
+                      marginBottom: "6px",
                     }}
                   >
                     This certifies that
@@ -455,7 +453,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                   <div
                     style={{
                       textAlign: "center",
-                      marginBottom: "18px",
+                      marginBottom: "10px",
                     }}
                   >
                     <div
@@ -490,6 +488,21 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                     </div>
                   </div>
 
+                  {/* ── "has taken the following pledge" label ───────────── */}
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontFamily: "Crimson Pro, Georgia, serif",
+                      fontStyle: "italic",
+                      fontSize: "13px",
+                      color: "oklch(0.48 0.06 145)",
+                      marginBottom: "8px",
+                      letterSpacing: "0.01em",
+                    }}
+                  >
+                    has taken the following pledge
+                  </div>
+
                   {/* ── Pledge text ──────────────────────────────────────── */}
                   <div
                     style={{
@@ -500,7 +513,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                       lineHeight: "1.75",
                       color: "oklch(0.34 0.06 145)",
                       maxWidth: "580px",
-                      margin: "0 auto 22px",
+                      margin: "0 auto 14px",
                       padding: "14px 20px",
                       background: "oklch(0.94 0.04 140 / 0.5)",
                       borderLeft: "3px solid oklch(0.52 0.16 140)",
@@ -515,8 +528,8 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                   <div
                     style={{
                       borderTop: "1px solid oklch(0.80 0.06 138)",
-                      marginBottom: "16px",
-                      paddingTop: "14px",
+                      marginBottom: "10px",
+                      paddingTop: "10px",
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "flex-end",
@@ -626,38 +639,47 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                       alignItems: "flex-end",
                     }}
                   >
-                    <div style={{ textAlign: "center" }}>
-                      <img
-                        src="/assets/generated/signature-stamp-transparent.dim_300x120.png"
-                        alt="Campaign Organizer Signature"
+                    <div style={{ textAlign: "right" }}>
+                      {/* Signature name in elegant italic serif */}
+                      <div
                         style={{
-                          width: "180px",
-                          height: "72px",
-                          objectFit: "contain",
-                          display: "block",
-                          marginBottom: "4px",
+                          fontFamily: "Crimson Pro, Georgia, serif",
+                          fontStyle: "italic",
+                          fontSize: "38px",
+                          fontWeight: "500",
+                          color: "oklch(0.24 0.14 148)",
+                          lineHeight: "1.1",
+                          letterSpacing: "0.01em",
+                          minWidth: "170px",
+                          marginBottom: "2px",
+                          /* Subtle ink-like text shadow for handwritten depth */
+                          textShadow:
+                            "0.5px 0.5px 0px oklch(0.28 0.12 148 / 0.18)",
                         }}
-                        crossOrigin="anonymous"
-                      />
+                      >
+                        Abhikansh
+                      </div>
+                      {/* Designation label */}
+                      <div
+                        style={{
+                          fontFamily: "'Plus Jakarta Sans', sans-serif",
+                          fontSize: "8.5px",
+                          letterSpacing: "0.16em",
+                          textTransform: "uppercase",
+                          color: "oklch(0.52 0.08 148)",
+                          fontWeight: "600",
+                          marginBottom: "6px",
+                        }}
+                      >
+                        Founder &amp; President
+                      </div>
+                      {/* Separator line */}
                       <div
                         style={{
                           borderTop: "1px solid oklch(0.62 0.12 138)",
                           paddingTop: "5px",
                         }}
                       >
-                        <div
-                          style={{
-                            fontFamily: "'Plus Jakarta Sans', sans-serif",
-                            fontSize: "9px",
-                            letterSpacing: "0.14em",
-                            textTransform: "uppercase",
-                            color: "oklch(0.52 0.08 148)",
-                            marginBottom: "2px",
-                            fontWeight: "600",
-                          }}
-                        >
-                          Campaign Organizer
-                        </div>
                         <div
                           style={{
                             fontFamily: "Fraunces, Georgia, serif",
@@ -677,7 +699,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                   <div
                     style={{
                       textAlign: "center",
-                      marginTop: "14px",
+                      marginTop: "8px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
