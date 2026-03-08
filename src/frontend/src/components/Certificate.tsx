@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { CheckCircle, Download, Loader2, RotateCcw } from "lucide-react";
 import { motion } from "motion/react";
@@ -106,7 +105,7 @@ function OrnamentalDivider({ wide = false }: { wide?: boolean }) {
 }
 
 export function Certificate({ certificate, onReset }: CertificateProps) {
-  const certRef = useRef<HTMLDivElement>(null);
+  const certRef = useRef<HTMLDivElement>(null); // kept for DOM reference (not used by canvas draw)
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
 
@@ -115,26 +114,295 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
   const CERT_WIDTH = 794;
   const CERT_HEIGHT = 567; // 7:5 ratio → 794 * 5 / 7 ≈ 567
 
+  const drawCertificateToCanvas = (
+    canvas: HTMLCanvasElement,
+    scale: number,
+  ) => {
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const W = CERT_WIDTH * scale;
+    const H = CERT_HEIGHT * scale;
+    canvas.width = W;
+    canvas.height = H;
+
+    ctx.scale(scale, scale);
+
+    // ── Background gradient ────────────────────────────────────────────────
+    const bgGrad = ctx.createLinearGradient(
+      0,
+      0,
+      CERT_WIDTH * Math.cos((160 * Math.PI) / 180),
+      CERT_HEIGHT,
+    );
+    bgGrad.addColorStop(0, "#faf6eb");
+    bgGrad.addColorStop(0.3, "#f2ede0");
+    bgGrad.addColorStop(0.65, "#e8f2e8");
+    bgGrad.addColorStop(1, "#dff0df");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, CERT_WIDTH, CERT_HEIGHT);
+
+    // ── Outer border ──────────────────────────────────────────────────────
+    ctx.strokeStyle = "#2d6b3a";
+    ctx.lineWidth = 2.5;
+    ctx.strokeRect(10, 10, CERT_WIDTH - 20, CERT_HEIGHT - 20);
+
+    ctx.strokeStyle = "rgba(80,140,80,0.4)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(16, 16, CERT_WIDTH - 32, CERT_HEIGHT - 32);
+
+    // ── Watermark "PLEDGE" ────────────────────────────────────────────────
+    ctx.save();
+    ctx.font = "900 120px Georgia, serif";
+    ctx.fillStyle = "rgba(60,120,60,0.04)";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("PLEDGE", CERT_WIDTH / 2, CERT_HEIGHT / 2);
+    ctx.restore();
+
+    // helper for centered text
+    const centerText = (
+      text: string,
+      y: number,
+      font: string,
+      color: string,
+      maxWidth?: number,
+    ) => {
+      ctx.font = font;
+      ctx.fillStyle = color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+      if (maxWidth) ctx.fillText(text, CERT_WIDTH / 2, y, maxWidth);
+      else ctx.fillText(text, CERT_WIDTH / 2, y);
+    };
+
+    // ── EST. 2017 row ─────────────────────────────────────────────────────
+    centerText("— EST. 2017 —", 62, "600 10px 'Arial', sans-serif", "#4a8a55");
+
+    // ── L' DORADO main heading ────────────────────────────────────────────
+    ctx.save();
+    const headGrad = ctx.createLinearGradient(
+      CERT_WIDTH * 0.2,
+      0,
+      CERT_WIDTH * 0.8,
+      0,
+    );
+    headGrad.addColorStop(0, "#1e5c30");
+    headGrad.addColorStop(0.5, "#2d7a3f");
+    headGrad.addColorStop(1, "#1e5c30");
+    ctx.font = "900 44px Georgia, serif";
+    ctx.fillStyle = headGrad;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    ctx.letterSpacing = "0.08em";
+    ctx.fillText("L' DORADO", CERT_WIDTH / 2, 115);
+    ctx.restore();
+
+    // ── Ornamental divider ────────────────────────────────────────────────
+    const drawDivider = (y: number, lineW = 80) => {
+      const cx = CERT_WIDTH / 2;
+      ctx.strokeStyle = "#3d8c50";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx - lineW - 20, y);
+      ctx.lineTo(cx - 15, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx + 15, y);
+      ctx.lineTo(cx + lineW + 20, y);
+      ctx.stroke();
+      ctx.font = "14px serif";
+      ctx.fillStyle = "#2d6b3a";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("✦", cx, y);
+    };
+    drawDivider(126, 120);
+
+    // ── Sub-label ─────────────────────────────────────────────────────────
+    centerText(
+      "NO SINGLE-USE PLASTICS CAMPAIGN",
+      145,
+      "600 10px Arial, sans-serif",
+      "#3d7a55",
+    );
+
+    // ── Certificate of Pledge ─────────────────────────────────────────────
+    centerText(
+      "Certificate of Pledge",
+      182,
+      "700 30px Georgia, serif",
+      "#1a3d26",
+    );
+
+    drawDivider(194, 80);
+
+    // ── This certifies that ───────────────────────────────────────────────
+    ctx.font = "italic 15px Georgia, serif";
+    ctx.fillStyle = "#4a6b52";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText("This certifies that", CERT_WIDTH / 2, 218);
+
+    // ── Pledger name ──────────────────────────────────────────────────────
+    ctx.font = "600 34px Georgia, serif";
+    ctx.fillStyle = "#1a3d2e";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText(certificate.name, CERT_WIDTH / 2, 260);
+
+    // Underline for name
+    const nameWidth = Math.min(
+      ctx.measureText(certificate.name).width + 48,
+      500,
+    );
+    ctx.strokeStyle = "#3d8c50";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(CERT_WIDTH / 2 - nameWidth / 2, 265);
+    ctx.lineTo(CERT_WIDTH / 2 + nameWidth / 2, 265);
+    ctx.stroke();
+
+    // ── "has taken the following pledge" ──────────────────────────────────
+    ctx.font = "italic 12px Georgia, serif";
+    ctx.fillStyle = "#4a6b52";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText("has taken the following pledge", CERT_WIDTH / 2, 284);
+
+    // ── Pledge text box ───────────────────────────────────────────────────
+    const pledgeBoxX = (CERT_WIDTH - 580) / 2;
+    const pledgeBoxY = 292;
+    const pledgeBoxW = 580;
+    const pledgeBoxH = 68;
+    ctx.fillStyle = "rgba(200,230,200,0.35)";
+    ctx.fillRect(pledgeBoxX, pledgeBoxY, pledgeBoxW, pledgeBoxH);
+    ctx.strokeStyle = "#3d8c50";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(pledgeBoxX, pledgeBoxY);
+    ctx.lineTo(pledgeBoxX, pledgeBoxY + pledgeBoxH);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(pledgeBoxX + pledgeBoxW, pledgeBoxY);
+    ctx.lineTo(pledgeBoxX + pledgeBoxW, pledgeBoxY + pledgeBoxH);
+    ctx.stroke();
+
+    // Wrap pledge text
+    ctx.font = "italic 13px Georgia, serif";
+    ctx.fillStyle = "#2d5038";
+    ctx.textAlign = "center";
+    const pledgeWords = `"${PLEDGE_TEXT}"`.split(" ");
+    let line = "";
+    let pledgeY = pledgeBoxY + 20;
+    const maxLineW = pledgeBoxW - 40;
+    for (const word of pledgeWords) {
+      const testLine = line ? `${line} ${word}` : word;
+      if (ctx.measureText(testLine).width > maxLineW && line) {
+        ctx.fillText(line, CERT_WIDTH / 2, pledgeY);
+        line = word;
+        pledgeY += 18;
+      } else {
+        line = testLine;
+      }
+    }
+    if (line) ctx.fillText(line, CERT_WIDTH / 2, pledgeY);
+
+    // ── Horizontal separator ──────────────────────────────────────────────
+    const sepY = 376;
+    ctx.strokeStyle = "rgba(120,180,120,0.6)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(30, sepY);
+    ctx.lineTo(CERT_WIDTH - 30, sepY);
+    ctx.stroke();
+
+    // ── Date (left) ───────────────────────────────────────────────────────
+    ctx.font = "600 9px Arial, sans-serif";
+    ctx.fillStyle = "#4a7055";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText("DATE OF PLEDGE", 52, sepY + 18);
+    ctx.font = "600 17px Georgia, serif";
+    ctx.fillStyle = "#1a3d26";
+    ctx.fillText(dateFormatted, 52, sepY + 38);
+
+    // ── Eco seal (center) ─────────────────────────────────────────────────
+    const sealCX = CERT_WIDTH / 2;
+    const sealCY = sepY + 26;
+    ctx.strokeStyle = "#3d8c50";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(sealCX, sealCY, 26, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(200,235,200,0.55)";
+    ctx.fill();
+    ctx.font = "22px serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("🌿", sealCX, sealCY - 4);
+    ctx.font = "700 7px Arial, sans-serif";
+    ctx.fillStyle = "#2d6b3a";
+    ctx.fillText("PLEDGED", sealCX, sealCY + 16);
+
+    // ── Certificate No. (right) ───────────────────────────────────────────
+    ctx.font = "600 9px Arial, sans-serif";
+    ctx.fillStyle = "#4a7055";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText("CERTIFICATE NO.", CERT_WIDTH - 52, sepY + 18);
+    ctx.font = "italic 14px Georgia, serif";
+    ctx.fillStyle = "#3d6050";
+    ctx.fillText(`#${certificate.id}`, CERT_WIDTH - 52, sepY + 38);
+
+    // ── Signature block (right-aligned) ──────────────────────────────────
+    const sigX = CERT_WIDTH - 60;
+    ctx.font = "600 26px 'Georgia', cursive, serif";
+    ctx.fillStyle = "#1a3d2e";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText("Abhikansh", sigX, sepY + 72);
+
+    ctx.font = "600 8.5px Arial, sans-serif";
+    ctx.fillStyle = "#4a6055";
+    ctx.fillText("FOUNDER & PRESIDENT", sigX, sepY + 86);
+
+    ctx.strokeStyle = "#4a8c55";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(sigX - 160, sepY + 93);
+    ctx.lineTo(sigX, sepY + 93);
+    ctx.stroke();
+
+    ctx.font = "800 14px Georgia, serif";
+    ctx.fillStyle = "#2a6038";
+    ctx.fillText("L' DORADO", sigX, sepY + 108);
+
+    // ── Bottom botanical row ──────────────────────────────────────────────
+    ctx.font = "600 8px Arial, sans-serif";
+    ctx.fillStyle = "rgba(70,140,80,0.55)";
+    ctx.textAlign = "center";
+    ctx.fillText(
+      "🌱  FOR A CLEANER PLANET  🌊",
+      CERT_WIDTH / 2,
+      CERT_HEIGHT - 22,
+    );
+  };
+
   const handleDownload = async () => {
-    if (!certRef.current) return;
     setIsDownloading(true);
     setDownloadSuccess(false);
 
     try {
-      const canvas = await html2canvas(certRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#f5f0e4",
-        logging: false,
-        width: CERT_WIDTH,
-        height: CERT_HEIGHT,
-      });
+      const canvas = document.createElement("canvas");
+      drawCertificateToCanvas(canvas, 2);
 
-      const imgData = canvas.toDataURL("image/jpeg", 0.98);
+      const imgData = canvas.toDataURL("image/jpeg", 0.96);
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "px",
         format: [CERT_WIDTH, CERT_HEIGHT],
+        hotfixes: ["px_scaling"],
       });
 
       pdf.addImage(imgData, "JPEG", 0, 0, CERT_WIDTH, CERT_HEIGHT);
