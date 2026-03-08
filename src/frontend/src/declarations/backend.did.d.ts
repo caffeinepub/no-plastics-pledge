@@ -15,8 +15,15 @@ export interface Certificate {
   'name' : string,
   'timestamp' : Time,
 }
+export interface Pledge {
+  'name' : string,
+  'email' : string,
+  'certificateId' : string,
+  'timestamp' : Time,
+}
 export type Time = bigint;
 export interface _SERVICE {
+  'getAdminPledges' : ActorMethod<[string], Array<Pledge>>,
   'getRecentCertificates' : ActorMethod<[], Array<Certificate>>,
   'getTotalPledges' : ActorMethod<[], bigint>,
   'takePledge' : ActorMethod<[string, string], Certificate>,

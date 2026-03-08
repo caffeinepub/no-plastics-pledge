@@ -89,19 +89,40 @@ export class ExternalBlob {
         return this;
     }
 }
+export type Time = bigint;
 export interface Certificate {
     id: string;
     name: string;
     timestamp: Time;
 }
-export type Time = bigint;
+export interface Pledge {
+    name: string;
+    email: string;
+    certificateId: string;
+    timestamp: Time;
+}
 export interface backendInterface {
+    getAdminPledges(password: string): Promise<Array<Pledge>>;
     getRecentCertificates(): Promise<Array<Certificate>>;
     getTotalPledges(): Promise<bigint>;
     takePledge(name: string, email: string): Promise<Certificate>;
 }
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
+    async getAdminPledges(arg0: string): Promise<Array<Pledge>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAdminPledges(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAdminPledges(arg0);
+            return result;
+        }
+    }
     async getRecentCertificates(): Promise<Array<Certificate>> {
         if (this.processError) {
             try {

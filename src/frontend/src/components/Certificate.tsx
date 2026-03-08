@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { jsPDF } from "jspdf";
 import { CheckCircle, Download, Loader2, RotateCcw } from "lucide-react";
 import { motion } from "motion/react";
 import { useRef, useState } from "react";
@@ -389,6 +388,46 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
     );
   };
 
+  type JsPDFModule = {
+    jsPDF: new (
+      opts: Record<string, unknown>,
+    ) => {
+      addImage: (
+        data: string,
+        fmt: string,
+        x: number,
+        y: number,
+        w: number,
+        h: number,
+      ) => void;
+      save: (name: string) => void;
+    };
+  };
+
+  const loadJsPDF = (): Promise<JsPDFModule> => {
+    return new Promise((resolve, reject) => {
+      const w = window as Window & { jspdf?: JsPDFModule };
+      // Check if already loaded
+      if (typeof window !== "undefined" && w.jspdf) {
+        resolve(w.jspdf);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src =
+        "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+      script.onload = () => {
+        const ww = window as Window & { jspdf?: JsPDFModule };
+        if (ww.jspdf) {
+          resolve(ww.jspdf);
+        } else {
+          reject(new Error("jsPDF failed to load"));
+        }
+      };
+      script.onerror = () => reject(new Error("Failed to load jsPDF script"));
+      document.head.appendChild(script);
+    });
+  };
+
   const handleDownload = async () => {
     setIsDownloading(true);
     setDownloadSuccess(false);
@@ -398,6 +437,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
       drawCertificateToCanvas(canvas, 2);
 
       const imgData = canvas.toDataURL("image/jpeg", 0.96);
+      const { jsPDF } = await loadJsPDF();
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "px",

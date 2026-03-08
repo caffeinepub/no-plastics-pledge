@@ -1,7 +1,7 @@
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
-import Text "mo:core/Text";
 import Time "mo:core/Time";
+import Text "mo:core/Text";
 
 module {
   type Pledge = {
@@ -11,26 +11,18 @@ module {
     email : Text;
   };
 
-  type Certificate = {
-    id : Text;
-    name : Text;
-    timestamp : Time.Time;
-  };
-
-  // Old actor type without counter field
   type OldActor = {
     pledgesMap : Map.Map<Text, Pledge>;
-    maxResponseLength : Nat;
+    counter : Nat;
   };
 
-  // New types with counter field
   type NewActor = {
     pledgesMap : Map.Map<Text, Pledge>;
-    maxResponseLength : Nat;
-    var counter : Nat;
+    counter : Nat;
+    adminPassword : Text;
   };
 
   public func run(old : OldActor) : NewActor {
-    { old with var counter = 0 : Nat };
+    { old with adminPassword = "ldorado2017admin" };
   };
 };

@@ -2,14 +2,15 @@ import { Toaster } from "@/components/ui/sonner";
 import { AnimatePresence } from "motion/react";
 import { useState } from "react";
 import type { Certificate as CertificateType } from "./backend.d";
+import { AdminPanel } from "./components/AdminPanel";
 import { Certificate } from "./components/Certificate";
 import { Footer } from "./components/Footer";
 import { HeroSection } from "./components/HeroSection";
 import { PledgeForm } from "./components/PledgeForm";
-import { PledgeWall } from "./components/PledgeWall";
 
 export default function App() {
   const [certificate, setCertificate] = useState<CertificateType | null>(null);
+  const [showAdmin, setShowAdmin] = useState(false);
 
   const handlePledgeSuccess = (cert: CertificateType) => {
     setCertificate(cert);
@@ -37,76 +38,85 @@ export default function App() {
     <div className="min-h-screen flex flex-col">
       <Toaster />
 
-      {/* Header/Nav */}
-      <header
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md"
-        style={{
-          background: "oklch(0.1 0.04 148 / 0.85)",
-          borderBottom: "1px solid oklch(0.45 0.1 142 / 0.25)",
-        }}
-      >
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <span className="text-xl">🌿</span>
-            <div className="flex flex-col leading-none">
-              <span
-                className="font-display font-bold text-lg tracking-tight"
-                style={{ color: "oklch(0.92 0.06 138)" }}
-              >
-                No Single-Use Plastics Pledge
-              </span>
-              <span
-                className="font-body text-xs font-semibold tracking-widest uppercase"
-                style={{ color: "oklch(0.55 0.18 142)" }}
-              >
-                L&apos; DORADO
-              </span>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => {
-              document
-                .getElementById("pledge-form")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="hidden sm:inline-flex items-center px-5 py-2 rounded-lg font-body font-semibold text-sm transition-all duration-200 hover:scale-[1.02]"
+      {showAdmin ? (
+        <>
+          <AdminPanel onClose={() => setShowAdmin(false)} />
+          <Footer onAdminClick={() => setShowAdmin(true)} />
+        </>
+      ) : (
+        <>
+          {/* Header/Nav */}
+          <header
+            className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md"
             style={{
-              background: "oklch(0.48 0.15 142)",
-              color: "oklch(0.97 0.01 120)",
+              background: "oklch(0.1 0.04 148 / 0.85)",
+              borderBottom: "1px solid oklch(0.45 0.1 142 / 0.25)",
             }}
           >
-            Take the Pledge
-          </button>
-        </div>
-      </header>
+            <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xl">🌿</span>
+                <div className="flex flex-col leading-none">
+                  <span
+                    className="font-display font-bold text-lg tracking-tight"
+                    style={{ color: "oklch(0.92 0.06 138)" }}
+                  >
+                    No Single-Use Plastics Pledge
+                  </span>
+                  <span
+                    className="font-body text-xs font-semibold tracking-widest uppercase"
+                    style={{ color: "oklch(0.55 0.18 142)" }}
+                  >
+                    L&apos; DORADO
+                  </span>
+                </div>
+              </div>
 
-      {/* Main content */}
-      <main className="flex-1">
-        {/* Hero */}
-        <HeroSection />
-
-        {/* Certificate section (shown after successful pledge) */}
-        <AnimatePresence>
-          {certificate && (
-            <div id="certificate-section">
-              <Certificate certificate={certificate} onReset={handleReset} />
+              <button
+                type="button"
+                onClick={() => {
+                  document
+                    .getElementById("pledge-form")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="hidden sm:inline-flex items-center px-5 py-2 rounded-lg font-body font-semibold text-sm transition-all duration-200 hover:scale-[1.02]"
+                style={{
+                  background: "oklch(0.48 0.15 142)",
+                  color: "oklch(0.97 0.01 120)",
+                }}
+              >
+                Take the Pledge
+              </button>
             </div>
-          )}
-        </AnimatePresence>
+          </header>
 
-        {/* Pledge Form (hidden after successful pledge) */}
-        <AnimatePresence>
-          {!certificate && <PledgeForm onSuccess={handlePledgeSuccess} />}
-        </AnimatePresence>
+          {/* Main content */}
+          <main className="flex-1">
+            {/* Hero */}
+            <HeroSection />
 
-        {/* Pledge Wall */}
-        <PledgeWall />
-      </main>
+            {/* Certificate section (shown after successful pledge) */}
+            <AnimatePresence>
+              {certificate && (
+                <div id="certificate-section">
+                  <Certificate
+                    certificate={certificate}
+                    onReset={handleReset}
+                  />
+                </div>
+              )}
+            </AnimatePresence>
 
-      {/* Footer */}
-      <Footer />
+            {/* Pledge Form (hidden after successful pledge) */}
+            <AnimatePresence>
+              {!certificate && <PledgeForm onSuccess={handlePledgeSuccess} />}
+            </AnimatePresence>
+          </main>
+
+          {/* Footer */}
+          <Footer onAdminClick={() => setShowAdmin(true)} />
+        </>
+      )}
     </div>
   );
 }

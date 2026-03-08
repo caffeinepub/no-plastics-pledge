@@ -7,9 +7,9 @@ import Text "mo:core/Text";
 import Order "mo:core/Order";
 import Int "mo:core/Int";
 import Nat "mo:core/Nat";
+import Migration "migration";
 
-
-
+(with migration = Migration.run)
 actor {
   type Pledge = {
     certificateId : Text;
@@ -32,6 +32,8 @@ actor {
       };
     };
   };
+
+  let adminPassword = "ldorado2017admin";
 
   // certificateId to pledge
   let pledgesMap = Map.empty<Text, Pledge>();
@@ -99,6 +101,11 @@ actor {
       func(i) { sortedCertificates[i] },
     );
     limitedCertificates;
+  };
+
+  public query ({ caller }) func getAdminPledges(password : Text) : async [Pledge] {
+    if (password != adminPassword) { Runtime.trap("Unauthorized") };
+    pledgesMap.values().toArray();
   };
 
   func generateCertificateId() : Text {

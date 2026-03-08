@@ -9,6 +9,12 @@
 import { IDL } from '@icp-sdk/core/candid';
 
 export const Time = IDL.Int;
+export const Pledge = IDL.Record({
+  'name' : IDL.Text,
+  'email' : IDL.Text,
+  'certificateId' : IDL.Text,
+  'timestamp' : Time,
+});
 export const Certificate = IDL.Record({
   'id' : IDL.Text,
   'name' : IDL.Text,
@@ -16,6 +22,7 @@ export const Certificate = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  'getAdminPledges' : IDL.Func([IDL.Text], [IDL.Vec(Pledge)], ['query']),
   'getRecentCertificates' : IDL.Func([], [IDL.Vec(Certificate)], ['query']),
   'getTotalPledges' : IDL.Func([], [IDL.Nat], ['query']),
   'takePledge' : IDL.Func([IDL.Text, IDL.Text], [Certificate], []),
@@ -25,6 +32,12 @@ export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
   const Time = IDL.Int;
+  const Pledge = IDL.Record({
+    'name' : IDL.Text,
+    'email' : IDL.Text,
+    'certificateId' : IDL.Text,
+    'timestamp' : Time,
+  });
   const Certificate = IDL.Record({
     'id' : IDL.Text,
     'name' : IDL.Text,
@@ -32,6 +45,7 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
+    'getAdminPledges' : IDL.Func([IDL.Text], [IDL.Vec(Pledge)], ['query']),
     'getRecentCertificates' : IDL.Func([], [IDL.Vec(Certificate)], ['query']),
     'getTotalPledges' : IDL.Func([], [IDL.Nat], ['query']),
     'takePledge' : IDL.Func([IDL.Text, IDL.Text], [Certificate], []),

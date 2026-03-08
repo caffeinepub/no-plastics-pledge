@@ -1,4 +1,8 @@
-export function Footer() {
+interface FooterProps {
+  onAdminClick?: () => void;
+}
+
+export function Footer({ onAdminClick }: FooterProps) {
   const year = new Date().getFullYear();
   const hostname =
     typeof window !== "undefined" ? window.location.hostname : "";
@@ -54,6 +58,17 @@ export function Footer() {
               caffeine.ai
             </a>
           </p>
+
+          {/* Discreet admin link */}
+          <button
+            type="button"
+            data-ocid="footer.admin_link"
+            onClick={onAdminClick}
+            className="font-body text-[10px] mt-1 transition-opacity hover:opacity-70"
+            style={{ color: "oklch(0.38 0.03 145)", opacity: 0.55 }}
+          >
+            Admin
+          </button>
         </div>
       </div>
     </footer>
