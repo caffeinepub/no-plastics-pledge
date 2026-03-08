@@ -6,7 +6,10 @@ import Runtime "mo:core/Runtime";
 import Text "mo:core/Text";
 import Order "mo:core/Order";
 import Int "mo:core/Int";
+import Nat "mo:core/Nat";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
   type Pledge = {
     certificateId : Text;
@@ -36,6 +39,9 @@ actor {
   // limit recently displayed certificates
   let maxResponseLength = 100;
 
+  /// Counter for certificateId solution.
+  var counter : Nat = 0;
+
   public shared ({ caller }) func takePledge(name : Text, email : Text) : async Certificate {
     let emailLower = email.toLower();
 
@@ -50,7 +56,7 @@ actor {
       Runtime.trap("This email has already taken the pledge.");
     };
 
-    let certificateId = await generateCertificateId();
+    let certificateId = generateCertificateId();
     let pledge : Pledge = {
       certificateId;
       timestamp = Time.now();
@@ -95,9 +101,9 @@ actor {
     limitedCertificates;
   };
 
-  func generateCertificateId() : async Text {
-    // generate certificateId using current timestamp for pseudo-randomness
-    let timestamp = Time.now();
-    "CERT-" # timestamp.toText();
+  func generateCertificateId() : Text {
+    // generate certificateId without timestamp, use counter instead (persistent on upgrade)
+    counter += 1;
+    counter.toText();
   };
 };

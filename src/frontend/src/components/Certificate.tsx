@@ -112,6 +112,9 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
 
   const dateFormatted = formatPledgeDate(certificate.timestamp);
 
+  const CERT_WIDTH = 794;
+  const CERT_HEIGHT = 567; // 7:5 ratio → 794 * 5 / 7 ≈ 567
+
   const handleDownload = async () => {
     if (!certRef.current) return;
     setIsDownloading(true);
@@ -123,19 +126,18 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
         useCORS: true,
         backgroundColor: "#f5f0e4",
         logging: false,
-        width: 794,
-        height: certRef.current.offsetHeight,
+        width: CERT_WIDTH,
+        height: CERT_HEIGHT,
       });
 
       const imgData = canvas.toDataURL("image/jpeg", 0.98);
-      const certHeightPx = Math.round(canvas.height / 2);
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "px",
-        format: [794, certHeightPx],
+        format: [CERT_WIDTH, CERT_HEIGHT],
       });
 
-      pdf.addImage(imgData, "JPEG", 0, 0, 794, certHeightPx);
+      pdf.addImage(imgData, "JPEG", 0, 0, CERT_WIDTH, CERT_HEIGHT);
       pdf.save(`pledge-certificate-${certificate.id}.pdf`);
 
       setDownloadSuccess(true);
@@ -199,9 +201,10 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                 ref={certRef}
                 style={{
                   width: "794px",
+                  height: "567px",
                   background:
                     "linear-gradient(160deg, #faf6eb 0%, #f2ede0 30%, #e8f2e8 65%, #dff0df 100%)",
-                  padding: "36px 60px 30px",
+                  padding: "24px 52px 20px",
                   fontFamily: "'Crimson Pro', Georgia, serif",
                   position: "relative",
                   boxSizing: "border-box",
@@ -345,7 +348,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                   <div
                     style={{
                       textAlign: "center",
-                      marginBottom: "4px",
+                      marginBottom: "2px",
                     }}
                   >
                     {/* Decorative top botanical row */}
@@ -355,7 +358,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                         alignItems: "center",
                         justifyContent: "center",
                         gap: "16px",
-                        marginBottom: "10px",
+                        marginBottom: "6px",
                       }}
                     >
                       <LeafMotif />
@@ -378,7 +381,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                     <div
                       style={{
                         fontFamily: "Fraunces, Georgia, serif",
-                        fontSize: "52px",
+                        fontSize: "44px",
                         fontWeight: "900",
                         letterSpacing: "0.08em",
                         textTransform: "uppercase",
@@ -388,7 +391,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
                         backgroundClip: "text",
-                        marginBottom: "8px",
+                        marginBottom: "6px",
                       }}
                     >
                       L&apos; DORADO
@@ -406,8 +409,8 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                       letterSpacing: "0.26em",
                       textTransform: "uppercase",
                       color: "oklch(0.46 0.10 150)",
-                      marginTop: "8px",
-                      marginBottom: "3px",
+                      marginTop: "4px",
+                      marginBottom: "2px",
                       fontWeight: "600",
                     }}
                   >
@@ -419,7 +422,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                     style={{
                       textAlign: "center",
                       fontFamily: "Fraunces, Georgia, serif",
-                      fontSize: "36px",
+                      fontSize: "30px",
                       fontWeight: "700",
                       color: "oklch(0.20 0.08 148)",
                       lineHeight: "1.1",
@@ -431,7 +434,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                   </div>
 
                   {/* ── Ornamental divider ───────────────────────────────── */}
-                  <div style={{ margin: "10px 0" }}>
+                  <div style={{ margin: "6px 0" }}>
                     <OrnamentalDivider />
                   </div>
 
@@ -441,9 +444,9 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                       textAlign: "center",
                       fontFamily: "Crimson Pro, Georgia, serif",
                       fontStyle: "italic",
-                      fontSize: "18px",
+                      fontSize: "15px",
                       color: "oklch(0.42 0.06 145)",
-                      marginBottom: "6px",
+                      marginBottom: "4px",
                     }}
                   >
                     This certifies that
@@ -453,19 +456,19 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                   <div
                     style={{
                       textAlign: "center",
-                      marginBottom: "10px",
+                      marginBottom: "6px",
                     }}
                   >
                     <div
                       style={{
                         display: "inline-block",
                         fontFamily: "Fraunces, Georgia, serif",
-                        fontSize: "40px",
+                        fontSize: "34px",
                         fontWeight: "600",
                         color: "oklch(0.24 0.12 150)",
                         letterSpacing: "-0.01em",
                         lineHeight: "1.2",
-                        paddingBottom: "8px",
+                        paddingBottom: "6px",
                         paddingLeft: "24px",
                         paddingRight: "24px",
                         borderBottom: "2px solid oklch(0.52 0.16 138)",
@@ -494,9 +497,9 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                       textAlign: "center",
                       fontFamily: "Crimson Pro, Georgia, serif",
                       fontStyle: "italic",
-                      fontSize: "13px",
+                      fontSize: "12px",
                       color: "oklch(0.48 0.06 145)",
-                      marginBottom: "8px",
+                      marginBottom: "5px",
                       letterSpacing: "0.01em",
                     }}
                   >
@@ -509,12 +512,12 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                       textAlign: "center",
                       fontFamily: "Crimson Pro, Georgia, serif",
                       fontStyle: "italic",
-                      fontSize: "15.5px",
-                      lineHeight: "1.75",
+                      fontSize: "13.5px",
+                      lineHeight: "1.6",
                       color: "oklch(0.34 0.06 145)",
                       maxWidth: "580px",
-                      margin: "0 auto 14px",
-                      padding: "14px 20px",
+                      margin: "0 auto 10px",
+                      padding: "10px 20px",
                       background: "oklch(0.94 0.04 140 / 0.5)",
                       borderLeft: "3px solid oklch(0.52 0.16 140)",
                       borderRight: "3px solid oklch(0.52 0.16 140)",
@@ -528,8 +531,8 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                   <div
                     style={{
                       borderTop: "1px solid oklch(0.80 0.06 138)",
-                      marginBottom: "10px",
-                      paddingTop: "10px",
+                      marginBottom: "8px",
+                      paddingTop: "8px",
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "flex-end",
@@ -640,17 +643,16 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                     }}
                   >
                     <div style={{ textAlign: "right" }}>
-                      {/* Signature name in elegant italic serif */}
+                      {/* Signature name in handwriting script font */}
                       <div
                         style={{
-                          fontFamily: "Crimson Pro, Georgia, serif",
-                          fontStyle: "italic",
-                          fontSize: "38px",
-                          fontWeight: "500",
+                          fontFamily: "'Dancing Script', cursive",
+                          fontSize: "28px",
+                          fontWeight: "600",
                           color: "oklch(0.24 0.14 148)",
-                          lineHeight: "1.1",
+                          lineHeight: "1.2",
                           letterSpacing: "0.01em",
-                          minWidth: "170px",
+                          minWidth: "150px",
                           marginBottom: "2px",
                           /* Subtle ink-like text shadow for handwritten depth */
                           textShadow:
@@ -699,7 +701,7 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
                   <div
                     style={{
                       textAlign: "center",
-                      marginTop: "8px",
+                      marginTop: "6px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -731,30 +733,30 @@ export function Certificate({ certificate, onReset }: CertificateProps) {
           </div>
         </div>
 
-        {/* Certificate scale CSS */}
+        {/* Certificate scale CSS — cert is 794×567px (7:5 ratio) */}
         <style>{`
           @media (max-width: 840px) {
             .certificate-scale-wrapper {
               transform: scale(0.85) !important;
-              margin-bottom: -60px;
+              margin-bottom: -85px;
             }
           }
           @media (max-width: 700px) {
             .certificate-scale-wrapper {
               transform: scale(0.68) !important;
-              margin-bottom: -140px;
+              margin-bottom: -181px;
             }
           }
           @media (max-width: 540px) {
             .certificate-scale-wrapper {
               transform: scale(0.52) !important;
-              margin-bottom: -220px;
+              margin-bottom: -272px;
             }
           }
           @media (max-width: 430px) {
             .certificate-scale-wrapper {
               transform: scale(0.42) !important;
-              margin-bottom: -280px;
+              margin-bottom: -329px;
             }
           }
         `}</style>
