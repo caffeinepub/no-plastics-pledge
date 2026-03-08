@@ -22,6 +22,7 @@ export const Certificate = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  'adminResetPledges' : IDL.Func([IDL.Text], [], []),
   'getAdminPledges' : IDL.Func([IDL.Text], [IDL.Vec(Pledge)], ['query']),
   'getRecentCertificates' : IDL.Func([], [IDL.Vec(Certificate)], ['query']),
   'getTotalPledges' : IDL.Func([], [IDL.Nat], ['query']),
@@ -45,6 +46,7 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
+    'adminResetPledges' : IDL.Func([IDL.Text], [], []),
     'getAdminPledges' : IDL.Func([IDL.Text], [IDL.Vec(Pledge)], ['query']),
     'getRecentCertificates' : IDL.Func([], [IDL.Vec(Certificate)], ['query']),
     'getTotalPledges' : IDL.Func([], [IDL.Nat], ['query']),

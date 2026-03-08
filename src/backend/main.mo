@@ -7,9 +7,9 @@ import Text "mo:core/Text";
 import Order "mo:core/Order";
 import Int "mo:core/Int";
 import Nat "mo:core/Nat";
+import Migration "migration";
 
-
-
+(with migration = Migration.run)
 actor {
   type Pledge = {
     certificateId : Text;
@@ -108,9 +108,16 @@ actor {
     pledgesMap.values().toArray();
   };
 
+  public shared ({ caller }) func adminResetPledges(password : Text) : async () {
+    if (password != adminPassword) { Runtime.trap("Unauthorized") };
+    pledgesMap.clear();
+    counter := 0;
+  };
+
   func generateCertificateId() : Text {
     // generate certificateId without timestamp, use counter instead (persistent on upgrade)
     counter += 1;
     counter.toText();
   };
 };
+

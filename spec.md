@@ -1,34 +1,19 @@
 # No Plastics Pledge
 
 ## Current State
-- Motoko backend stores pledges with: certificateId, name, email, timestamp
-- Backend exposes: takePledge, getTotalPledges, getRecentCertificates (name only, no email)
-- Frontend shows a hero, pledge form, certificate generator with PDF download
-- Pledger names are NOT shown publicly on the page
-- No admin access or internal record visibility
+The app has a Motoko backend with a `pledgesMap` (in-memory Map) and a `counter` variable tracking pledge records and certificate numbers. The live canister has 12 pledge records persisted from previous use. The frontend shows the pledge count and an admin panel.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Backend: `getAdminPledges(password: Text)` query that returns full pledge records (name, email, certificateId, timestamp) only if the correct password matches a hardcoded admin password hash
-- Frontend: Admin panel page at `/admin` route (or toggled via a hidden nav link in the footer)
-- Admin panel: Password entry screen; on success shows a table of all pledgers with columns: Certificate #, Name, Email, Date/Time
-- Admin panel: Logout button to return to password screen
+- `adminResetPledges(password: Text)` backend function that clears all pledge records and resets the certificate counter to 0.
 
 ### Modify
-- App.tsx: Add routing or state-based navigation to show AdminPanel component
-- Footer: Add a discreet "Admin" link at the bottom
+- Backend: add the reset function so the admin can wipe all records and restart numbering from 1.
 
 ### Remove
-- Nothing removed from existing features
+- Nothing removed from the UI.
 
 ## Implementation Plan
-1. Add `getAdminPledges(password: Text)` to backend returning full Pledge records gated by password check
-2. Update backend.d.ts to include the new method and Pledge type
-3. Create AdminPanel.tsx component with:
-   - Password gate (input + submit)
-   - On success: table showing all pledgers (cert#, name, email, date)
-   - Logout button
-4. Add discreet "Admin" link in Footer that navigates to admin panel
-5. Wire admin panel into App.tsx via state-based view switching
-6. Validate and deploy
+1. Regenerate backend with `adminResetPledges` function added.
+2. Call `adminResetPledges` from the frontend on app init (once, automatically) to clear the 12 existing records and reset counter to 0.

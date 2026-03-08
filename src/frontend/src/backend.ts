@@ -102,6 +102,7 @@ export interface Pledge {
     timestamp: Time;
 }
 export interface backendInterface {
+    adminResetPledges(password: string): Promise<void>;
     getAdminPledges(password: string): Promise<Array<Pledge>>;
     getRecentCertificates(): Promise<Array<Certificate>>;
     getTotalPledges(): Promise<bigint>;
@@ -109,6 +110,20 @@ export interface backendInterface {
 }
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
+    async adminResetPledges(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.adminResetPledges(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.adminResetPledges(arg0);
+            return result;
+        }
+    }
     async getAdminPledges(arg0: string): Promise<Array<Pledge>> {
         if (this.processError) {
             try {

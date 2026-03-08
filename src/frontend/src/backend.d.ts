@@ -20,6 +20,7 @@ export interface Pledge {
     timestamp: Time;
 }
 export interface backendInterface {
+    adminResetPledges(password: string): Promise<void>;
     getAdminPledges(password: string): Promise<Array<Pledge>>;
     getRecentCertificates(): Promise<Array<Certificate>>;
     getTotalPledges(): Promise<bigint>;

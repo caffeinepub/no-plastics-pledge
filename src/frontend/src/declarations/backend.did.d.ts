@@ -23,6 +23,7 @@ export interface Pledge {
 }
 export type Time = bigint;
 export interface _SERVICE {
+  'adminResetPledges' : ActorMethod<[string], undefined>,
   'getAdminPledges' : ActorMethod<[string], Array<Pledge>>,
   'getRecentCertificates' : ActorMethod<[], Array<Certificate>>,
   'getTotalPledges' : ActorMethod<[], bigint>,
