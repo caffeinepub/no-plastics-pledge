@@ -11,7 +11,8 @@ export function useGetTotalPledges() {
       return actor.getTotalPledges();
     },
     enabled: !!actor && !isFetching,
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 10000, // Refresh every 10 seconds
+    staleTime: 0, // Always treat as stale so it refetches promptly
   });
 }
 
@@ -41,9 +42,10 @@ export function useTakePledge() {
         return actor.takePledge(name, email);
       },
       onSuccess: () => {
-        // Refresh the pledge count and wall after successful submission
+        // Immediately refetch the pledge count and wall after successful submission
         queryClient.invalidateQueries({ queryKey: ["totalPledges"] });
         queryClient.invalidateQueries({ queryKey: ["recentCertificates"] });
+        queryClient.refetchQueries({ queryKey: ["totalPledges"] });
       },
     }),
     isActorReady: !!actor && !isFetching,

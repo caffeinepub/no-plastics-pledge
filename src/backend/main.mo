@@ -7,9 +7,9 @@ import Text "mo:core/Text";
 import Order "mo:core/Order";
 import Int "mo:core/Int";
 import Nat "mo:core/Nat";
-import Migration "migration";
 
-(with migration = Migration.run)
+
+
 actor {
   type Pledge = {
     certificateId : Text;

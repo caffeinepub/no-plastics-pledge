@@ -1,28 +1,16 @@
 import { Toaster } from "@/components/ui/sonner";
 import { AnimatePresence } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import type { Certificate as CertificateType } from "./backend.d";
 import { AdminPanel } from "./components/AdminPanel";
 import { Certificate } from "./components/Certificate";
 import { Footer } from "./components/Footer";
 import { HeroSection } from "./components/HeroSection";
 import { PledgeForm } from "./components/PledgeForm";
-import { useActor } from "./hooks/useActor";
 
 export default function App() {
   const [certificate, setCertificate] = useState<CertificateType | null>(null);
   const [showAdmin, setShowAdmin] = useState(false);
-  const { actor, isFetching } = useActor();
-  const hasReset = useRef(false);
-
-  // One-time silent reset: wipe all pledge records and restart certificate numbering from 1
-  useEffect(() => {
-    if (!actor || isFetching || hasReset.current) return;
-    hasReset.current = true;
-    actor.adminResetPledges("ldorado2017admin").catch(() => {
-      // Silent failure — reset is best-effort
-    });
-  }, [actor, isFetching]);
 
   const handlePledgeSuccess = (cert: CertificateType) => {
     setCertificate(cert);
